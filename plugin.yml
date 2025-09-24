@@ -1,0 +1,6 @@
+---
+name: SlotMachine
+version: 0.0.1
+main: NewPlayerMC\Main
+api: 5.0.0
+...
