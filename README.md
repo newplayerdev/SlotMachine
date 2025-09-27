@@ -1,5 +1,6 @@
 # SlotMachine
 A simple PMMP 5 plugin implementing a `/slot` command, opening a GUI menu, simulating a slot machine.
+⚠ Early version of this plugin, economy system is not yet implemented, given this plugin is open source, you can always clone it and add it yourself if I never implement it.
 
 <img width="342" height="149" alt="image" src="https://github.com/user-attachments/assets/7e52cea7-22f7-4763-a7bc-3cbf47d3ab35" />
 
@@ -20,4 +21,4 @@ An animation will launch itself, displaying items going down then stopping one a
 
 The winning system will be improved in the future, to add more possibilities of winning and more divers winnings, aswell as the interface in order to make it more pleasant.
 
-Economy system is not yet implemented, given this plugin is open source, you can always clone this plugin and add it yourself if I never implement it.
+
