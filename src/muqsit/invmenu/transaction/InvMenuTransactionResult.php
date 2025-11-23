@@ -20,7 +20,7 @@ final class InvMenuTransactionResult{
 	 * Notify when we have escaped from the event stack trace and the
 	 * client's network stack trace.
 	 * Useful for sending forms and other stuff that cant be sent right
-	 * after closing menus.
+	 * after closing inventory.
 	 *
 	 * @param (Closure(Player) : void)|null $callback
 	 * @return self

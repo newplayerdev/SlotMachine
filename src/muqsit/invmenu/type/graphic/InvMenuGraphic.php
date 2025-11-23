@@ -20,7 +20,7 @@ interface InvMenuGraphic{
 
 	/**
 	 * Returns a rough duration (in milliseconds) the client
-	 * takes to animate the menus opening and closing.
+	 * takes to animate the inventory opening and closing.
 	 *
 	 * @return int
 	 */

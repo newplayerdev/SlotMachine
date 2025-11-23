@@ -18,7 +18,7 @@ interface InvMenuTransaction{
 	public function getIn() : Item;
 
 	/**
-	 * Returns the item that was clicked / taken out of the menus.
+	 * Returns the item that was clicked / taken out of the inventory.
 	 *
 	 * @link InvMenuTransaction::getOut()
 	 * @return Item
@@ -26,7 +26,7 @@ interface InvMenuTransaction{
 	public function getItemClicked() : Item;
 
 	/**
-	 * Returns the item that an item was clicked with / placed in the menus.
+	 * Returns the item that an item was clicked with / placed in the inventory.
 	 *
 	 * @link InvMenuTransaction::getIn()
 	 * @return Item

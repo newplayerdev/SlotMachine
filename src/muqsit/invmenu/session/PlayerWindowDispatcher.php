@@ -127,7 +127,7 @@ final class PlayerWindowDispatcher{
 	public function setResult(bool $result) : void{
 		$this->result = $result;
 		if(!$result){
-			// this belongs here so we do not end up calling menus close listener on failed dispatches
+			// this belongs here so we do not end up calling inventory close listener on failed dispatches
 			$this->session->current = null;
 		}
 		$this->task_handler?->cancel();

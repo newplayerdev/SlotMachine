@@ -20,10 +20,6 @@ class BetsManager
     /** @var Item[] */
     private array $slotItems = [];
 
-    /**
-     * playerName => [bet1 (int $), result1 (bool)], [bet2, result2], ..., [bet10, result10]
-     * @var array
-     */
     private array $playersSave = [];
 
     private Config $saveFile;

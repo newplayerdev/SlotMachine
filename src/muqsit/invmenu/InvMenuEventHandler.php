@@ -44,7 +44,7 @@ final class InvMenuEventHandler implements Listener{
 				}
 			}
 		}elseif($packet instanceof PacketViolationWarningPacket){
-			// we (ab)use a packet violation as an ACK the menus was successfully sent to the player. we expect to
+			// we (ab)use a packet violation as an ACK the inventory was successfully sent to the player. we expect to
 			// receive the same number of violation packets as the number of excess ContainerOpenPackets that we sent.
 			// digesting these excess violation packets is not necessary, but in this way we can intercept violations
 			// from propagating further if existing plugins print these violations for debugging purposes.
