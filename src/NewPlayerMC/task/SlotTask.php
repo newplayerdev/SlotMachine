@@ -46,7 +46,7 @@ class SlotTask extends Task
 
     public function onRun(): void
     {
-        if ($this->timer-- <= 0 || !$this->player->isOnline()) {
+        if ($this->timer-- <= 0 || !$this->player->isOnline() || !$this->player->getCurrentWindow() instanceof $this->inventory) {
             $this->getHandler()?->cancel();
             return;
         }
@@ -85,7 +85,6 @@ class SlotTask extends Task
 
         $this->betsManager->giveReward($this->bet);
 
-        $this->betsManager->removeBet($this->player);
         $this->betsManager->setSlotRunning($this->player->getName(), false);
         $this->player->removeCurrentWindow();
     }

@@ -10,6 +10,10 @@ class Bet
     /** @var Item[] */
     private array $result = [];
 
+    private bool $won;
+
+    private int $reward;
+
     private bool $hasStarted = false;
 
     public function __construct(
@@ -59,4 +63,35 @@ class Bet
         return $this->hasStarted;
     }
 
+    /**
+     * @return bool
+     */
+    public function isWon(): bool
+    {
+        return $this->won;
+    }
+
+    /**
+     * @param bool $won
+     */
+    public function setWon(bool $won = true): void
+    {
+        $this->won = $won;
+    }
+
+    /**
+     * @return int
+     */
+    public function getReward(): int
+    {
+        return $this->reward;
+    }
+
+    /**
+     * @param int $reward
+     */
+    public function setReward(int $reward): void
+    {
+        $this->reward = $reward;
+    }
 }

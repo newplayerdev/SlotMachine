@@ -2,7 +2,6 @@
 
 namespace NewPlayerMC\menus;
 
-use muqsit\customsizedinvmenu\CustomSizedInvMenu;
 use muqsit\invmenu\InvMenu;
 use muqsit\invmenu\transaction\DeterministicInvMenuTransaction;
 use NewPlayerMC\Bet;
@@ -11,7 +10,6 @@ use NewPlayerMC\Main;
 use NewPlayerMC\task\SlotTask;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\inventory\Inventory;
-use pocketmine\item\Item;
 use pocketmine\item\VanillaItems;
 use pocketmine\player\Player;
 use pocketmine\scheduler\ClosureTask;
@@ -28,8 +26,9 @@ class SlotMachineInventory
 
     public const BET = 18;
     public const LAUNCH = 26;
+    public const HISTORY = 0;
 
-    private InvMenu $menu;
+    public InvMenu $menu;
 
     public function __construct()
     {
@@ -41,10 +40,14 @@ class SlotMachineInventory
         $menu = $this->menu;
         $inv = $menu->getInventory();
 
-        // décor
         for ($i = 0; $i < $inv->getSize(); $i++) {
             $inv->setItem($i, VanillaBlocks::STAINED_GLASS_PANE()->asItem());
         }
+
+        $historyItem = VanillaItems::CLOCK();
+        $historyItem->setCustomName("§r§eHistory");
+        $historyItem->setLore(BetsManager::getInstance()->getLoreHistory($player));
+        $inv->setItem(self::HISTORY, $historyItem);
 
         $inv->setItem(11, VanillaBlocks::END_ROD()->asItem());
         $inv->setItem(15, VanillaBlocks::END_ROD()->asItem());
@@ -54,7 +57,7 @@ class SlotMachineInventory
         $inv->setItem(self::THIRD_SLOT, VanillaItems::GOLD_INGOT());
 
         $betsManager = BetsManager::getInstance();
-        $bet = $betsManager->getPlayerBet($player); // récupère d'abord
+        $bet = $betsManager->getPlayerBet($player);
 
         $betItem = $bet instanceof Bet
             ? VanillaItems::DIAMOND()->setCustomName("§r§bYour bet: §3" . $bet->getBet() . "$")
@@ -71,7 +74,6 @@ class SlotMachineInventory
         $menu->setListener(InvMenu::readonly(function(DeterministicInvMenuTransaction $transaction) use ($player, $menu, $bet, $betsManager) {
             $slot = $transaction->getAction()->getSlot();
 
-            // si la machine est déjà en cours pour ce joueur, on ignore clics
             if ($betsManager->isSlotRunning($player->getName())) {
                 $player->sendMessage("§cYou already have a bet going..");
                 return;
@@ -79,7 +81,6 @@ class SlotMachineInventory
 
             switch ($slot) {
                 case self::BET:
-                    // ouvrir le formulaire de pari
                     $player->removeCurrentWindow();
                     Main::getInstance()->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($player) {
                         $form = new BetCreateForm();
@@ -98,6 +99,7 @@ class SlotMachineInventory
                         5
                     );
                     break;
+                default: break;
             }
         }));
     }

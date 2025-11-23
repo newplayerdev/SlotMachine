@@ -7,6 +7,7 @@ use pocketmine\block\VanillaBlocks;
 use pocketmine\item\Item;
 use pocketmine\item\VanillaItems;
 use pocketmine\player\Player;
+use pocketmine\utils\Config;
 use pocketmine\utils\SingletonTrait;
 
 class BetsManager
@@ -19,9 +20,21 @@ class BetsManager
     /** @var Item[] */
     private array $slotItems = [];
 
+    /**
+     * playerName => [bet1 (int $), result1 (bool)], [bet2, result2], ..., [bet10, result10]
+     * @var array
+     */
+    private array $playersSave = [];
+
+    private Config $saveFile;
+
     public function __construct()
     {
         self::$instance = $this;
+
+        $this->saveFile = new Config(Main::getInstance()->getDataFolder() . "saves.json", Config::JSON);
+
+        $this->loadHistory();
 
         $this->addItem(VanillaItems::GOLD_INGOT());
         $this->addItem(VanillaItems::EMERALD());
@@ -72,24 +85,84 @@ class BetsManager
         unset($this->bets[$player->getName()]);
     }
 
+    public function saveBet(Player $player, Bet $bet): void {
+        $this->playersSave[$player->getName()][] = [$bet->getBet(), $bet->isWon(), $bet->getReward()];
+        if (count($this->playersSave[$player->getName()]) > 10) array_shift($this->playersSave[$player->getName()]);
+    }
+
+    /**
+     * Returns every bets opened
+     * @return array
+     */
     public function getBets(): array {
         return $this->bets;
     }
 
-    public function calculateReward(int $bet, Item $a, Item $b, Item $c): int {
+    public function loadHistory(): void {
+        $this->playersSave = $this->getSave()->getAll();
+    }
+
+    public function saveHistory(): void {
+        $this->getSave()->setAll($this->playersSave);
+        $this->getSave()->save();
+    }
+
+    public function getSave(): Config { // forgot how to do config
+        return $this->saveFile;
+    }
+
+    /**
+     * Returns player's bets history
+     * Need to be optimized
+     * @param Player $player
+     * @return array
+     */
+    public function getPlayerHistory(Player $player): array {
+        return isset($this->playersSave[$player->getName()]) ? $this->playersSave[$player->getName()] : [];
+    }
+
+    /** Return player's history under a lore format to be displayed in the menu */
+    public function getLoreHistory(Player $player): array {
+        $history = $this->getPlayerHistory($player);
+        if (!empty($history)) {
+            $i = 0;
+            $lore = [];
+            foreach ($history as $betEntry) {
+                if ($i >= 10) {
+                    break;
+                }
+
+                $result = $betEntry[1] ? "§aWon" : "§cLost";
+                $lore[] = "§r$result §f- Bet: $betEntry[0]$ - Prize: {$betEntry[2]}$";
+
+                $i++;
+            }
+
+            return $lore;
+        } else return ["No bet launched"];
+    }
+
+    // Need some optimization i think
+    public function calculateReward(Bet $bet): int {
+        $prize = $bet->getBet();
+        $bet->setWon();
+        list($a, $b, $c) = $bet->getResult();
         if ($a->equalsExact($b) && $b->equalsExact($c)) {
-            return $bet * 10;
+            $prize *= 10;
         } elseif ($a->equalsExact($b) || $b->equalsExact($c) || $a->equalsExact($c)) {
-            return $bet * 2; //
+            $prize *= 2;
         } else {
-            return 0;
+            $bet->setWon(false);
+            $prize = 0;
         }
+        $bet->setReward($prize);
+        return $prize;
     }
 
     public function giveReward(Bet $bet): void {
-        list ($a, $b, $c) = $bet->getResult();
-        $reward = $this->calculateReward($bet->getBet(), $a, $b, $c);
+        $reward = $this->calculateReward($bet);
         $player = $bet->getBettor();
+        $this->saveBet($player, $bet);
         $this->removeBet($player);
         if ($reward > 0) {
             $player->sendMessage("§aCongratulations ! You won §e\${$reward}§a !");

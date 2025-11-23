@@ -4,7 +4,7 @@ namespace NewPlayerMC\menus;
 
 use NewPlayerMC\BetsManager;
 use pocketmine\player\Player;
-use jojoe77777\FormAPI\CustomForm;
+use NewPlayerMC\RandomHeartAttack\libs\jojoe77777\FormAPI\CustomForm;
 
 class BetCreateForm
 {
